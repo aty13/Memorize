@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
     static private let emojis: [String] = ["👽", "🪡",  "🐪", "🦧", "🐞", "🦈", "🎲", "📦", "🪭", "📣", "📸"]
@@ -26,6 +27,14 @@ class EmojiMemoryGame: ObservableObject {
         model.cards
     }
     
+    var color: Color {
+        .orange
+    }
+    
+    var score: Int {
+        model.score
+    }
+    
     // MARK: - Intents
     
     func shuffle() {
@@ -33,6 +42,6 @@ class EmojiMemoryGame: ObservableObject {
     }
     
     func choose(card: MemorizeGame<String>.Card) {
-        model.chooseCard(card)
+        model.choose(card)
     }
 }
