@@ -23,6 +23,9 @@ struct MemorizeGameView: View {
             HStack {
                 score
                 Spacer()
+                deck
+                    .foregroundStyle(viewModel.color)
+                Spacer()
                 Button {
                     withAnimation {
                         viewModel.shuffle()
@@ -47,6 +50,8 @@ struct MemorizeGameView: View {
                     .onTapGesture {
                         choose(card)
                     }
+                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                    .transition(.asymmetric(insertion: .identity, removal: .identity))
             }
         }
     }
@@ -58,7 +63,34 @@ struct MemorizeGameView: View {
     }
     
     private var undealtCards: [Card] {
-        viewModel.cards.filter { isDealt($0) }
+        viewModel.cards.filter { !isDealt($0) }
+    }
+    
+    @Namespace private var dealingNamespace
+    
+    private var deck: some View {
+        ZStack {
+            ForEach(undealtCards) { card in
+                CardView(card)
+                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                    .transition(.asymmetric(insertion: .identity, removal: .identity))
+            }
+        }
+        .frame(width: 50, height: 50 / aspectRatio)
+        .onTapGesture {
+            deal()
+        }
+    }
+    
+    private func deal() {
+        var delay: TimeInterval = 0
+        
+        for card in viewModel.cards {
+            withAnimation(.bouncy(duration: 1).delay(delay)) {
+                _ = dealt.insert(card.id)
+            }
+            delay += 0.15
+        }
     }
     
     private var score: some View {
